@@ -36,5 +36,5 @@ app.use("/address", address);
 
 // listening server
 app.listen(process.env.PORT, process.env.HOST, () => {
-  console.log("app is running on ", process.env.PORT);
+  console.log("app is running on development mode", process.env.PORT);
 });
