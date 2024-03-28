@@ -17,6 +17,8 @@ const sequelize = new Sequelize(process.env.DB, process.env.USER, process.env.PA
 const db = {};
 db.users = require("./users.model.js")(sequelize, Sequelize);
 db.addresses = require("./address.model.js")(sequelize, Sequelize);
+db.options = require("./options.model.js")(sequelize, Sequelize);
+db.optionValues = require("./optionValues.model.js")(sequelize, Sequelize);
 
 // associating tables
 Object.keys(db).forEach(modelName => {
