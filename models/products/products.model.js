@@ -30,6 +30,9 @@ module.exports = (db, Sequelize) => {
       stock: {
         type: Sequelize.NUMERIC(8, 2),
       },
+      isDeleted: {
+        type: Sequelize.BOOLEAN
+      }
     },
     {
       tableName: "products",
@@ -39,7 +42,8 @@ module.exports = (db, Sequelize) => {
 
   Products.association = models => {
     Products.hasMany(models.productOptionMapping, { foreignKey: "productId" });
-    Products.hasMany(models.productVariantMapping, { foreignKey: "productId" });
+    Products.hasMany(models.productOptionValueIdMapping, { foreignKey: "productId" });
+    Products.hasMany(models.variantCombinationDetails, {foreignKey : "productId"})
   };
   return Products;
 };

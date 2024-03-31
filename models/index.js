@@ -15,10 +15,14 @@ const sequelize = new Sequelize(process.env.DB, process.env.USER, process.env.PA
 
 // intializing application models
 const db = {};
-db.users = require("./users.model.js")(sequelize, Sequelize);
-db.addresses = require("./address.model.js")(sequelize, Sequelize);
-db.options = require("./options.model.js")(sequelize, Sequelize);
-db.optionValues = require("./optionValues.model.js")(sequelize, Sequelize);
+db.users = require("./users/users.model.js")(sequelize, Sequelize);
+db.addresses = require("./users/address.model.js")(sequelize, Sequelize);
+db.options = require("./products/options/options.model.js")(sequelize, Sequelize);
+db.optionValues = require("./products/options/optionValues.model.js")(sequelize, Sequelize);
+db.products = require("./products/products.model.js")(sequelize, Sequelize);
+db.variantCombinationDetails = require("./products/variantCombinationDetails.model.js")(sequelize, Sequelize);
+db.productOptionMapping = require("./products/mappings/productOptionMapping.model.js")(sequelize, Sequelize);
+db.productOptionValueIdMapping = require("./products/mappings/productOptionValueIdMapping.model.js")(sequelize, Sequelize);
 
 // associating tables
 Object.keys(db).forEach(modelName => {

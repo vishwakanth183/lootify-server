@@ -12,6 +12,9 @@ module.exports = (db, Sequelize) => {
         type: Sequelize.STRING(100),
         unique: true,
       },
+      optionValueIds: {
+        type: Sequelize.STRING,
+      },
       mrpPrice: {
         type: Sequelize.NUMERIC(8, 2),
       },
@@ -31,8 +34,8 @@ module.exports = (db, Sequelize) => {
     },
   );
 
+
   VariantCombinationDetails.association = models => {
-    // Each combination belongs to a product
     VariantCombinationDetails.belongsTo(models.products, { foreignKey: "productId" });
   };
   return VariantCombinationDetails;

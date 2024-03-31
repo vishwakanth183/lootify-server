@@ -15,6 +15,7 @@ const db = require("./models");
 const userRoute = require("./router/auth.router");
 const address = require("./router/address.router");
 const optionRoute = require("./router/options.router");
+const productRoute = require("./router/products/product.router.js")
 
 // connecting to db
 db.sequelize
@@ -35,6 +36,7 @@ app.use(passport.initialize());
 app.use("/auth", userRoute);
 app.use("/address", address);
 app.use("/options", optionRoute);
+app.use("/product", productRoute);
 
 // listening server
 app.listen(process.env.PORT, process.env.HOST, () => {
