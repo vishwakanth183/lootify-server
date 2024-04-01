@@ -8,6 +8,9 @@ module.exports = (db, Sequelize) => {
         autoIncrement: true,
         allowNull: false,
       },
+      isDeleted: {
+        type: Sequelize.BOOLEAN,
+      },
       combinationName: {
         type: Sequelize.STRING(100),
         unique: true,
@@ -33,7 +36,6 @@ module.exports = (db, Sequelize) => {
       alter: true,
     },
   );
-
 
   VariantCombinationDetails.association = models => {
     VariantCombinationDetails.belongsTo(models.products, { foreignKey: "productId" });
