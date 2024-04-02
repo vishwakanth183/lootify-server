@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../../models");
 const Address = db.addresses;
 
 // Function to add address to the db

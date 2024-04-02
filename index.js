@@ -12,10 +12,10 @@ const passport = require("passport");
 const db = require("./models");
 
 // importing routes
-const userRoute = require("./router/auth.router");
-const address = require("./router/address.router");
-const optionRoute = require("./router/options.router");
-const productRoute = require("./router/products/product.router.js")
+const userRoute = require("./router/auth/auth.router.js");
+const address = require("./router/address/address.router.js");
+const optionRoute = require("./router/options/options.router.js");
+const productRoute = require("./router/products/product.router.js");
 
 // connecting to db
 db.sequelize

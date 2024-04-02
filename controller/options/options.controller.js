@@ -1,4 +1,5 @@
-const db = require("../models");
+const db = require("../../models");
+const { updateExistingOptionValueIds, updateNewOptionValueIds, updateOptionData, removeOptionValueIds, findOptionProductMapping, destroyOption } = require("../../service/options.service");
 const options = db.options;
 const optionValues = db.optionValues;
 
@@ -73,17 +74,13 @@ const updateOption = async (req, res) => {
         description: req.body.description,
         showColors: req.body.showColors,
       };
-      console.log("updateData", updateData, optionId);
+      // console.log("updateData", updateData, optionId);
 
       //   updating the option data
-      await options.update(
-        updateData,
-        {
-          where: { id: optionId },
-          returning: true, // Return the updated instance
-        },
-        { transaction: transact },
-      );
+      const [errUpdatingOption, updateOption] = await to(updateOptionData(updateData, optionId, transact));
+      if (errUpdatingOption) {
+        return ReE(res, errUpdatingOption.message || "Error updating options", 400);
+      }
 
       //   preparing the updation and removal value for optionvalue ids
       const removeIds = req?.body?.removeIds ? req.body.removeIds : [];
@@ -94,33 +91,23 @@ const updateOption = async (req, res) => {
 
       // Delete option values for removal IDs
       try {
-        await Promise.all(removeIds.map(async id => optionValues.destroy({ where: { id }, transaction: transact })));
-      } catch (error) {
-        console.error("Error deleting option values:", error);
-        // You can choose to throw the error to rollback the transaction or handle it differently
+        const removeValueIds = await removeOptionValueIds(removeIds, transact);
+        console.log("Option values removed:", removeValueIds);
+      } catch (errRemovingOptionValueId) {
+        console.error("Error removing option value:", errRemovingOptionValueId);
+        throw errRemovingOptionValueId;
       }
 
       // Update existing option values
-      try {
-        await Promise.all(updatedOptionValues.filter(value => value.id).map(async value => optionValues.update(value, { where: { id: value.id }, transaction: transact })));
-      } catch (error) {
-        console.error("Error updating option values:", error);
-        // You can choose to throw the error to rollback the transaction or handle it differently
+      const [errorUpdatingValueIds, updateValueIds] = await to(updateExistingOptionValueIds(updatedOptionValues, transact));
+      if (errorUpdatingValueIds) {
+        throw errorCreatingNewValueIds;
       }
 
       // Create new option values
-      try {
-        await Promise.all(
-          updatedOptionValues
-            .filter(value => !value.id)
-            .map(async value => {
-              value.optionId = optionId;
-              await optionValues.create(value, { transaction: transact });
-            }),
-        );
-      } catch (error) {
-        console.error("Error creating option values:", error);
-        // You can choose to throw the error to rollback the transaction or handle it differently
+      const [errorCreatingNewValueIds, creatingNewValueIds] = await to(updateNewOptionValueIds(updatedOptionValues, optionId, transact));
+      if (errorCreatingNewValueIds) {
+        throw errorCreatingNewValueIds.message;
       }
     });
 
@@ -131,4 +118,29 @@ const updateOption = async (req, res) => {
   }
 };
 
-module.exports = { createOption, getOptionsList, updateOption };
+// Function used to delete an option
+const deleteOption = async (req, res) => {
+  try {
+    await db.sequelize.transaction(async transact => {
+      const optionId = req.body.optionId;
+      const optionValueIds = req.body.optionValueIds;
+
+      const [mappingErr, isOptionMapped] = await to(findOptionProductMapping(optionId));
+      if (mappingErr) {
+        throw mappingErr;
+      }
+      if (isOptionMapped.length) {
+        throw new Error("Can't remove option it is being mapped to products");
+      } else {
+        const [deleteOptionError, deletedOption] = await to(destroyOption(optionId, optionValueIds, transact));
+        console.log("deletedOption", deletedOption);
+        if (deleteOptionError) throw deleteOptionError;
+        return ReS(res, "Option deleted successfully", 200);
+      }
+    });
+  } catch (error) {
+    return ReE(res, error.message || "Error while deleting option", 400);
+  }
+};
+
+module.exports = { createOption, getOptionsList, updateOption, deleteOption };

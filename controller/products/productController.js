@@ -1,5 +1,5 @@
 const db = require("../../models");
-const { createNewProductOptionMapping, createNewOptionValueIdMapping, createNewVariantCombinationDetails, getProductDetails, updateOptionIdMappings, updateVariantCombinationDetails, updateOptionValueIdMappings, updateSingleProduct } = require("../../service/product.service");
+const { createNewProductOptionMapping, createNewOptionValueIdMapping, createNewVariantCombinationDetails, getProductDetails, updateOptionIdMappings, updateVariantCombinationDetails, updateOptionValueIdMappings, updateSingleProduct, getProductListByQuery } = require("../../service/product.service");
 const Products = db.products;
 const VariantCombinationDetails = db.variantCombinationDetails;
 const ProductOptionMapping = db.productOptionMapping;
@@ -154,4 +154,17 @@ const getProductDetail = async (req, res) => {
   }
 };
 
-module.exports = { addProduct, updateProduct, getProductDetail };
+// Function to get productList
+const getProductList = async (req, res) => {
+  let productData = req.query;
+  productData.filter = req.query.filter ? JSON.parse(req.query.filter) : { minPrice: 0, maxPrice: 1000 };
+  // console.log("getProductList", productData);
+  const [productListErr, ProductListData] = await to(getProductListByQuery(productData));
+  if (productListErr) {
+    console.log("Error getting product list", productListErr);
+    return ReE(res, productListErr.message || "Error getting product list", 400);
+  }
+  return ReS(res, ProductListData, 200);
+};
+
+module.exports = { addProduct, updateProduct, getProductDetail, getProductList };

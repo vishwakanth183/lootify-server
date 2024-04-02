@@ -305,3 +305,52 @@ const updateOptionValueIdMappings = async (variantCombinationDetails, productDet
 };
 
 module.exports.updateOptionValueIdMappings = updateOptionValueIdMappings;
+
+// Function to get product list
+const getProductListByQuery = async productData => {
+  // console.log("productData", productData);
+  try {
+    const limit = productData.limit;
+    const offset = productData.offset;
+
+    let productWhereCondition = {
+      isDeleted: false,
+    };
+
+    if (productData.searchText) {
+      productWhereCondition.productName = { [db.Sequelize.Op.iLike]: "%" + productData.searchText + "%" };
+    }
+
+    const variantWhereCondition = {
+      salesPrice: { [db.Sequelize.Op.between]: [productData.filter.minPrice, productData.filter.maxPrice] },
+    };
+
+    const [err, productsData] = await to(
+      Products.findAndCountAll({
+        where: productWhereCondition,
+        limit: limit,
+        offset: offset,
+        distinct: true, // Count only distinct products
+        attributes: ["id", "productName", "isVariants", "salesPrice", "mrpPrice", "stock"],
+        include: [
+          {
+            model: VariantCombinationDetails,
+            where: variantWhereCondition,
+            attributes: ["id", "combinationName", "isDefault", "salesPrice", "mrpPrice", "stock"],
+          },
+        ],
+      }),
+    );
+
+    if (err) {
+      console.error("Error while fetching product list:", err);
+      throw err;
+    }
+    return productsData;
+  } catch (error) {
+    console.error("Error fetching product list:", error);
+    throw error;
+  }
+};
+
+module.exports.getProductListByQuery = getProductListByQuery;

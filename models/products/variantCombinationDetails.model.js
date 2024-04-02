@@ -8,6 +8,9 @@ module.exports = (db, Sequelize) => {
         autoIncrement: true,
         allowNull: false,
       },
+      isDefault: {
+        type: Sequelize.BOOLEAN,
+      },
       isDeleted: {
         type: Sequelize.BOOLEAN,
       },
