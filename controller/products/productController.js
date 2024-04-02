@@ -167,4 +167,20 @@ const getProductList = async (req, res) => {
   return ReS(res, ProductListData, 200);
 };
 
-module.exports = { addProduct, updateProduct, getProductDetail, getProductList };
+// Function to delete product
+const deleteProduct = async (req, res) => {
+    let [err, deleteProduct] = await to(
+        Products.update(
+            { isDeleted: true },
+            {
+                where: { id: req.body.productId },
+            },
+        )
+    );
+    if (err) {
+        return ReE(res, err.message || "Some error occurred while deleting the product", 400);
+    }
+    return ReS(res, "Product deleted successfully", 200);
+}
+
+module.exports = { addProduct, updateProduct, getProductDetail, getProductList,deleteProduct };

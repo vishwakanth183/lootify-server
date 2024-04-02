@@ -27,6 +27,7 @@ module.exports = (db, Sequelize) => {
 
   Options.association = models => {
     Options.hasMany(models.optionValues, { foreignKey: "optionId" });
+    Options.hasMany(models.productOptionMapping, { foreignKey: "optionId" });
   };
   return Options;
 };

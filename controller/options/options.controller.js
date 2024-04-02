@@ -2,22 +2,39 @@ const db = require("../../models");
 const { updateExistingOptionValueIds, updateNewOptionValueIds, updateOptionData, removeOptionValueIds, findOptionProductMapping, destroyOption } = require("../../service/options.service");
 const options = db.options;
 const optionValues = db.optionValues;
+const productOptionMapping = db.productOptionMapping;
+const productOptionValueIdMapping = db.productOptionValueIdMapping
+const products = db.products
 
 // Function used to get options list
 const getOptionsList = async (req, res) => {
   const { offset = 0, limit = 10 } = req.query;
+  let optionsWhereCondition = {};
+
+  if (req.query.searchText) {
+    optionsWhereCondition.optionName = { [db.Sequelize.Op.iLike]: "%" + req.query.searchText + "%" };
+  }
+
 
   //   console.log("offset,limit", offset, limit);
 
   try {
-    const optionsList = await options.findAll({
+    const optionsList = await options.findAndCountAll({
       offset: parseInt(offset),
       limit: parseInt(limit),
+      attributes: ["id", "optionName", "showColors"],
+      distinct: true,
+      where: optionsWhereCondition,
       include: [
         {
           model: optionValues,
-          as: "optionValues", // Define the alias for the association
+          as: "optionValues",
+          attributes: ["id", "value"],
         },
+        {
+          model: productOptionMapping,
+          attributes: ["productId"]
+        }
       ],
     });
 
@@ -143,4 +160,34 @@ const deleteOption = async (req, res) => {
   }
 };
 
-module.exports = { createOption, getOptionsList, updateOption, deleteOption };
+// Function use to get option details
+const getOptionDetails = async (req, res) => {
+  const optionId = req.query.optionId;
+  try {
+    // Fetch option details including associated data
+    const optionDetail = await options.findByPk(optionId, {
+      attributes : ["id","optionName","showColors","description"],
+      include: [
+        {
+          model : optionValues,
+          attributes : ["id","value","color"],
+          include: [{
+            model : productOptionValueIdMapping,
+            attributes : ["productId"],
+            include : {
+              model : products,
+              attributes : ["productName"]
+            },
+          }],
+        }
+      ],
+    });
+    return ReS(res, optionDetail, 200);
+
+  } catch (error) {
+    // Handle errors
+    return ReE(res, error.message || "Error while getting optionDetails", 400);
+  }
+};
+
+module.exports = { createOption, getOptionsList, updateOption, deleteOption , getOptionDetails };
