@@ -23,6 +23,11 @@ db.products = require("./products/products.model.js")(sequelize, Sequelize);
 db.variantCombinationDetails = require("./products/variantCombinationDetails.model.js")(sequelize, Sequelize);
 db.productOptionMapping = require("./products/mappings/productOptionMapping.model.js")(sequelize, Sequelize);
 db.productOptionValueIdMapping = require("./products/mappings/productOptionValueIdMapping.model.js")(sequelize, Sequelize);
+db.discounts = require("./discounts/discount.model.js")(sequelize, Sequelize);
+db.discountUserMapping = require("./discounts/discountUserMapping.model.js")(sequelize, Sequelize);
+db.customers = require("./customers/customers.model.js")(sequelize, Sequelize);
+db.customerAddress = require("./customers/customerAddress.model.js")(sequelize, Sequelize);
+db.orders = require("./orders/orders.models.js")(sequelize, Sequelize);
 
 // associating tables
 Object.keys(db).forEach(modelName => {
