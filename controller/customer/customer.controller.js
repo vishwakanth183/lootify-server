@@ -1,5 +1,5 @@
 const db = require("../../models");
-const { createCustomerWithAddress, updateCustomerWithAddress } = require("../../service/customer.service");
+const { createCustomerWithAddress, updateCustomerWithAddress, destroyCustomerWithAddress } = require("../../service/customer.service");
 const Customers = db.customers;
 const CustomerAddress = db.customerAddress;
 
@@ -73,6 +73,16 @@ const editCustomer = async (req, res) => {
 };
 
 // Function to delete an customer
-const deleteCustomer = (req, res) => {};
+const deleteCustomer = async (req, res) => {
+  try {
+    const [deleteErr, deleteCustomer] = await to(destroyCustomerWithAddress(req.body.customerId));
+    if (deleteErr) {
+      throw deleteErr;
+    }
+    return ReS(res, "Customer deleted Successfully", 200);
+  } catch (err) {
+    return ReE(res, err.message || "Error deleting customer details", 400);
+  }
+};
 
 module.exports = { getCustomerList, addCustomer, editCustomer, deleteCustomer, getCustomerDetails };

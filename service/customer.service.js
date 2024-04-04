@@ -90,3 +90,22 @@ const updateCustomerWithAddress = async customerDetails => {
 };
 
 module.exports.updateCustomerWithAddress = updateCustomerWithAddress;
+
+// Function to delete customer and mapped address
+const destroyCustomerWithAddress = async customerId => {
+  // console.log("delete customer id", customerId);
+  try {
+    await db.sequelize.transaction(async transact => {
+      const mappedCustomerAddress = await CustomerAddress.findAll({ where: { customerId: customerId } });
+      let mappedAddressIds = mappedCustomerAddress.map(address => address.id);
+      // console.log("mappedAddressIds"), mappedAddressIds;
+      await CustomerAddress.destroy({ where: { id: mappedAddressIds } }, { transaction: transact });
+      const destroyedCustomerDetails = await Customers.destroy({ where: { id: customerId } }, { transaction: transact });
+      return destroyedCustomerDetails;
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+module.exports.destroyCustomerWithAddress = destroyCustomerWithAddress;

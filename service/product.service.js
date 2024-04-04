@@ -319,11 +319,14 @@ const getProductListByQuery = async productData => {
 
     if (productData.searchText) {
       productWhereCondition.productName = { [db.Sequelize.Op.iLike]: "%" + productData.searchText + "%" };
+      productWhereCondition.salesPrice = { [db.Sequelize.Op.between]: [productData.filter.minPrice, productData.filter.maxPrice] };
     }
 
-    const variantWhereCondition = {
-      salesPrice: { [db.Sequelize.Op.between]: [productData.filter.minPrice, productData.filter.maxPrice] },
-    };
+    const variantWhereCondition = {};
+    if (productData.filter) {
+      variantWhereCondition.salesPrice = { [db.Sequelize.Op.between]: [productData.filter.minPrice, productData.filter.maxPrice] };
+    }
+    console.log("variantWhereCondition", variantWhereCondition, productData.filter);
 
     const [err, productsData] = await to(
       Products.findAndCountAll({
@@ -335,7 +338,7 @@ const getProductListByQuery = async productData => {
         include: [
           {
             model: VariantCombinationDetails,
-            where: variantWhereCondition,
+            // where: variantWhereCondition,
             attributes: ["id", "combinationName", "isDefault", "salesPrice", "mrpPrice", "stock"],
           },
         ],

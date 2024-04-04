@@ -18,6 +18,7 @@ const optionRoute = require("./router/options/options.router.js");
 const productRoute = require("./router/products/product.router.js");
 const discountRoute = require("./router/discounts/discount.router.js");
 const customerRoute = require("./router/customer/customer.router.js");
+const orderRoute = require("./router/orders/order.router.js");
 
 // connecting to db
 db.sequelize
@@ -41,6 +42,7 @@ app.use("/options", optionRoute);
 app.use("/product", productRoute);
 app.use("/discount", discountRoute);
 app.use("/customer", customerRoute);
+app.use("/order", orderRoute);
 
 // listening server
 app.listen(process.env.PORT, process.env.HOST, () => {

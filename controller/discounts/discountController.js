@@ -1,6 +1,6 @@
 const db = require("../../models");
 const Discounts = db.discounts;
-const discountUserMapping = db.discountUserMapping;
+const customerDiscountMapping = db.customerDiscountMapping;
 
 // Function to get discount list
 const getDiscountList = async (req, res) => {

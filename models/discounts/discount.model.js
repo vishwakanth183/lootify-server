@@ -28,7 +28,7 @@ module.exports = (db, Sequelize) => {
         type: Sequelize.BOOLEAN,
       },
       usageLimitPerCustomer: {
-        type: Sequelize.NUMERIC(8, 2),
+        type: Sequelize.NUMERIC,
       },
     },
     {
@@ -38,7 +38,7 @@ module.exports = (db, Sequelize) => {
   );
 
   Discounts.association = models => {
-    Discounts.hasMany(models.discountUserMapping, { foreignKey: "discountId" });
+    Discounts.hasMany(models.customerDiscountMapping, { foreignKey: "discountId" });
   };
   return Discounts;
 };

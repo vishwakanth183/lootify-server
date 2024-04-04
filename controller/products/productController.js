@@ -157,7 +157,7 @@ const getProductDetail = async (req, res) => {
 // Function to get productList
 const getProductList = async (req, res) => {
   let productData = req.query;
-  productData.filter = req.query.filter ? JSON.parse(req.query.filter) : { minPrice: 0, maxPrice: 1000 };
+  productData.filter = req.query.filter ? JSON.parse(req.query.filter) : null;
   // console.log("getProductList", productData);
   const [productListErr, ProductListData] = await to(getProductListByQuery(productData));
   if (productListErr) {
@@ -169,18 +169,18 @@ const getProductList = async (req, res) => {
 
 // Function to delete product
 const deleteProduct = async (req, res) => {
-    let [err, deleteProduct] = await to(
-        Products.update(
-            { isDeleted: true },
-            {
-                where: { id: req.body.productId },
-            },
-        )
-    );
-    if (err) {
-        return ReE(res, err.message || "Some error occurred while deleting the product", 400);
-    }
-    return ReS(res, "Product deleted successfully", 200);
-}
+  let [err, deleteProduct] = await to(
+    Products.update(
+      { isDeleted: true },
+      {
+        where: { id: req.body.productId },
+      },
+    ),
+  );
+  if (err) {
+    return ReE(res, err.message || "Some error occurred while deleting the product", 400);
+  }
+  return ReS(res, "Product deleted successfully", 200);
+};
 
-module.exports = { addProduct, updateProduct, getProductDetail, getProductList,deleteProduct };
+module.exports = { addProduct, updateProduct, getProductDetail, getProductList, deleteProduct };

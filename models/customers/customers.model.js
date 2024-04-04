@@ -15,6 +15,7 @@ module.exports = (db, Sequelize) => {
       mobileNumber: {
         type: Sequelize.STRING(10),
         require: true,
+        unique: true,
       },
       email: {
         type: Sequelize.STRING(100),
