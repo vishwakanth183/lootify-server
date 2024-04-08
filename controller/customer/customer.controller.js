@@ -17,6 +17,9 @@ const getCustomerList = async (req, res) => {
       offset: parseInt(offset),
       limit: parseInt(limit),
       attributes: ["id", "customerName", "mobileNumber", "email"],
+      include : {
+        model : CustomerAddress
+      },
       distinct: true,
       where: customerCondition,
     });

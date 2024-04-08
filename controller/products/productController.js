@@ -4,6 +4,9 @@ const Products = db.products;
 const VariantCombinationDetails = db.variantCombinationDetails;
 const ProductOptionMapping = db.productOptionMapping;
 const ProductOptionValueIdMapping = db.productOptionValueIdMapping;
+const Options = db.options
+const OptionValues = db.optionValues;
+
 
 // Function to add products to the db
 const addProduct = async (req, res) => {
@@ -146,7 +149,22 @@ const updateProduct = async (req, res) => {
 // Function to get product details
 const getProductDetail = async (req, res) => {
   try {
-    const productDetail = await Products.findByPk(req.query.productId, { include: [VariantCombinationDetails, db.productOptionMapping] });
+    const productDetail = await Products.findByPk(req.query.productId, {
+      include: [{
+        model: VariantCombinationDetails,
+      },{
+        model : ProductOptionMapping,
+        attributes : ["optionId"],
+        include : {
+          model : Options,
+          attributes:["id","optionName","showColors"],
+          include: [{
+            model: OptionValues,
+          attributes:["id","value","color","optionId"],
+          }]
+        }
+      }]
+    });
     return ReS(res, productDetail, 200);
   } catch (err) {
     console.log("Error getting product details", err);
@@ -158,6 +176,7 @@ const getProductDetail = async (req, res) => {
 const getProductList = async (req, res) => {
   let productData = req.query;
   productData.filter = req.query.filter ? JSON.parse(req.query.filter) : null;
+  productData.isRestore = req.query.restore;
   // console.log("getProductList", productData);
   const [productListErr, ProductListData] = await to(getProductListByQuery(productData));
   if (productListErr) {

@@ -12,7 +12,10 @@ module.exports = (db, Sequelize) => {
         type: Sequelize.STRING(100),
       },
       addressLine2: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.BOOLEAN,
+      },
+      isDefault : {
+        type: Sequelize.STRING(50),
       },
       city: {
         type: Sequelize.STRING(50),

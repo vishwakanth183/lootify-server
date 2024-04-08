@@ -314,17 +314,17 @@ const getProductListByQuery = async productData => {
     const offset = productData.offset;
 
     let productWhereCondition = {
-      isDeleted: false,
+      isDeleted: productData.isRestore ? true : false,
     };
 
     if (productData.searchText) {
       productWhereCondition.productName = { [db.Sequelize.Op.iLike]: "%" + productData.searchText + "%" };
-      productWhereCondition.salesPrice = { [db.Sequelize.Op.between]: [productData.filter.minPrice, productData.filter.maxPrice] };
+      // productWhereCondition.salesPrice = { [db.Sequelize.Op.between]: [productData?.filter?.minPrice, productData?.filter?.maxPrice] };
     }
 
     const variantWhereCondition = {};
     if (productData.filter) {
-      variantWhereCondition.salesPrice = { [db.Sequelize.Op.between]: [productData.filter.minPrice, productData.filter.maxPrice] };
+      // variantWhereCondition.salesPrice = { [db.Sequelize.Op.between]: [productData?.filter?.minPrice, productData?.filter?.maxPrice] };
     }
     console.log("variantWhereCondition", variantWhereCondition, productData.filter);
 

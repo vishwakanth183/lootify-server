@@ -16,7 +16,6 @@ module.exports = (db, Sequelize) => {
       },
       combinationName: {
         type: Sequelize.STRING(100),
-        unique: true,
       },
       optionValueIds: {
         type: Sequelize.STRING,
