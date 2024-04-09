@@ -189,7 +189,7 @@ const cancelOrderById = async orderId => {
     await db.sequelize.transaction(async transact => {
       const orderDetails = await getOrderDetailsById(orderId);
 
-      console.log("orderDetails customerDiscountMapping", orderDetails.customerDiscountMapping.id);
+      // console.log("orderDetails customerDiscountMapping", orderDetails.customerDiscountMapping.id);
 
       if (orderDetails.isCancelled) {
         throw new Error("Order already cancelled");
@@ -206,11 +206,11 @@ const cancelOrderById = async orderId => {
       );
 
       // removed mapped discount for this order
-      if (orderDetails.customerDiscountMapping.id) {
+      if (orderDetails?.customerDiscountMapping?.id) {
         await CustomerDiscountMapping.destroy({ where: { id: orderDetails.customerDiscountMapping.id } }, { transaction: transact });
       }
 
-      const cacelOrderResponse = Orders.update({ isCancelled: true }, { where: { id: orderId } }, { transaction: transact });
+      const cacelOrderResponse = Orders.update({ isCancelled: true, orderStatus: "Cancelled" }, { where: { id: orderId } }, { transaction: transact });
       return cacelOrderResponse;
     });
   } catch (err) {

@@ -26,6 +26,25 @@ const getDiscountList = async (req, res) => {
   }
 };
 
+// Function to get discount based on id
+const getDiscountDetails = async (req, res) => {
+  try {
+    const discountId = req.query.discountId;
+    console.log("discountId", discountId);
+    const discountDetail = await Discounts.findByPk(
+      discountId,
+      //   {
+      //   attributes: ["id", "promoCode", "discountType", "discountValue", "maximumDiscountValue", "minimumOrderValue", "isActive", "usageLimitPerCustomer"],
+      // }
+    );
+
+    return ReS(res, discountDetail, 200);
+  } catch (err) {
+    console.log("err", err);
+    return ReE(res, err.message || "Error fetching discount details", 400);
+  }
+};
+
 // Function to add an discount
 const addDiscount = (req, res) => {
   const newDiscount = req.body;
@@ -72,4 +91,4 @@ const deleteDiscount = (req, res) => {
     });
 };
 
-module.exports = { getDiscountList, addDiscount, editDiscount, deleteDiscount };
+module.exports = { getDiscountList, addDiscount, editDiscount, deleteDiscount, getDiscountDetails };

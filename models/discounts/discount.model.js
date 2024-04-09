@@ -18,7 +18,7 @@ module.exports = (db, Sequelize) => {
       discountValue: {
         type: Sequelize.NUMERIC(8, 2),
       },
-      maxumumDiscountValue: {
+      maximumDiscountValue: {
         type: Sequelize.NUMERIC(8, 2),
       },
       minimumOrderValue: {
